@@ -19,11 +19,12 @@ def initial_design(bounds, batchsize, method="latin"):
             x[:,i] = x[:,i]*(bounds[i][1]-bounds[i][0]) + bounds[i][0]
     return np.round(x, -1)
 
-def calc_EIstep(X_init, Y_init, batchsize, normalize, savepath):
+def calc_EIstep(X_init, Y_init, batchsize, normalize, savepath, kernel):
     space = GPyOpt.core.task.space.Design_space(get_domain(normalize=normalize), None)
-    #model_gp = GPyOpt.models.GPModel(
-    #    kernel=GPy.kern.RBF(input_dim=7, ARD=True),ARD=True, verbose=False)
-    model_gp = GPyOpt.models.GPModel(ARD=True, verbose=False)
+    if kernel == "RBF":
+        model_gp = GPyOpt.models.GPModel(kernel=GPy.kern.RBF(input_dim=X_init.shape[1], ARD=True),ARD=True,verbose=False)
+    elif kernel == "matern52":
+        model_gp = GPyOpt.models.GPModel(ARD=True, verbose=False)
     objective = GPyOpt.core.task.SingleObjective(None)
     acquisition_optimizer = GPyOpt.optimization.AcquisitionOptimizer(space)
     acquisition_EI = GPyOpt.acquisitions.AcquisitionEI(model_gp, space, acquisition_optimizer, jitter=0)
@@ -46,7 +47,7 @@ def calc_EIstep(X_init, Y_init, batchsize, normalize, savepath):
     if normalize:
         nextX = rescale(nextX)
     
-    with open( savepath+"/model/EI_j"+str(jitter)+".pkl", "wb") as f:
+    with open( savepath+"/model/EI_j"+".pkl", "wb") as f:
         pickle.dump(bo_EI, f, protocol=2)
     
     return nextX

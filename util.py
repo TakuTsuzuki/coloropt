@@ -76,7 +76,7 @@ def x2csv(nextX, savepath):
     return 0
 
 
-
+#simulator
 def color_sim(x, target, minimize=True):
     def color(x):
         color1 = x[:,0]

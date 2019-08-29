@@ -14,6 +14,9 @@ def get_args():
     parser.add_argument("--savepath", default="./test")
     parser.add_argument("--batchsize", default=5)
     parser.add_argument("--normalize", default=True)
+    parser.add_argument("--initdesign", default="latin") # "latin" or "random"
+    parser.add_argument("--bokernel", default="RBF") # "matern52" or "RBF" or "Linear"
+    parser.add_argument("--acquisition", default="EI") # "EI" or "UCB"
     
     args = parser.parse_args()
     return args
@@ -24,6 +27,9 @@ def main():
     savepath = args.savepath
     batchsize = args.batchsize
     normalize = args.normalize
+    initdesign = args.initdesign
+    kernel = args.bokernel
+    acq = args.acquisition
     
     os.makedirs(savepath+"/model", exist_ok=True)
     os.makedirs(savepath+"/csv", exist_ok=True)
@@ -31,9 +37,9 @@ def main():
     X_init, Y_init = read_table(inputpath, normalize)
     
     if len(X_init)==0:
-        nextX = initial_design(bounds=X_bounds, batchsize=batchsize)
+        nextX = initial_design(bounds=X_bounds, batchsize=batchsize, method=initdesign)
     else:
-        nextX = calc_EIstep(X_init,Y_init,batchsize=batchsize,normalize =normalize, savepath= savepath)
+        nextX = calc_EIstep(X_init,Y_init,batchsize=batchsize,normalize =normalize, savepath= savepath,kernel=kernel)
     x2csv(nextX, savepath= savepath )
     
     
