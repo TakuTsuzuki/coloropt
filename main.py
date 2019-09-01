@@ -25,7 +25,7 @@ def main():
     args = get_args()
     inputpath = args.inputpath
     savepath = args.savepath
-    batchsize = args.batchsize
+    batchsize = int(args.batchsize)
     normalize = args.normalize
     initdesign = args.initdesign
     kernel = args.bokernel
